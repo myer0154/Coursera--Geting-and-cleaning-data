@@ -1,5 +1,5 @@
 # Getting and Cleaning Data: Course Project
-This repository contains the course project for the "Getting and Cleaning Data" module of the Coursera Data Science Specialization.  
+This repository contains the course project for the "Getting and Cleaning Data" module of the Coursera Data Science Specialization.  The script requires the `plyr` library to run.
 
 ## Contents
 This repository contains the following files:  
@@ -8,6 +8,8 @@ This repository contains the following files:
 * `codebook.md` - Codebook for the project; defines the variables used in `tidy.txt`
 * `tidy.txt` - The final, tidied version of the input data
 * `run_analysis.R` - The R language script file. Sourcing this will reproduce the tidying process.  
+
+The final data `tidy.txt` can be read back into R for further analysis using the line `read.table("tidy.txt")` when `tidy.txt` is in the working directory.
 
 
 ## Background
@@ -30,4 +32,4 @@ The `run_analysis.R` script, when sourced, will download the initial data set to
 	The labels given in `features.txt` are applied to the columns of the measurement data.  These labels are short but sufficiently descriptive to inform about their source.  Further information on the labels can also be found in the information accompanying the original data and in the `codebook.md` file in this repository.
 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.  
 	
-	FIX ME!
+	`ddlpy` from the `plyr` library is used to split the full data frame by columns "Subject" and "Activity", then apply the function `mean()` column-wise.  The results are written to the file `tidy.txt` using the `write.table` function.
