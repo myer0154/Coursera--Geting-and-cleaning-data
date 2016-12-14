@@ -1,4 +1,7 @@
-## sTEP 0: If the data files don't already exist, download and unzip them
+# load the plyr library, needed for ddply
+library(plyr)
+
+#If the data files don't already exist, download and unzip them
 if(!dir.exists("UCI HAR Dataset")) {
   download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "./data.zip")
   unzip("data.zip")
@@ -26,15 +29,18 @@ names(dataSubjects) <- "Subject"
 
 #extract the "mean" or "std" measures from the X data set then combine Subjects, Y, and X into one set
 dataX <- dataX[,grep("mean|std", names(dataX))]
-data <- cbind(dataSubjects, dataY, dataX)
+fullData <- cbind(dataSubjects, dataY, dataX)
 
 # remove the unneeded intermediate tables/frames from memory
 rm(trainX, trainY, testX, testY, trainSubjects, testSubjects, dataX, dataY, dataSubjects, featureLabels)
 
-# Merge the activity labels
-data <- merge(activityLabels, data, by.x = 1, by.y = "Activity ID")[-1]
-names(data)[1] <- "Activity"
+# Merge the activity labels, then remove the now-unnecessary data frame
+fullData <- merge(activityLabels, fullData, by.x = 1, by.y = "Activity ID")[-1]
+names(fullData)[1] <- "Activity"
+rm(activityLabels)
 
+# use ddply to split the data across Subject and Activity, then apply "mean()" column-wise
+tidyAverages <- ddply(fullData, .(Subject, Activity), numcolwise(mean))
 
-
-
+# write the result to output
+write.table(tidyAverages, file = "tidy.txt")
