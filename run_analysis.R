@@ -1,6 +1,3 @@
-# load the plyr library, needed for ddply
-library(plyr)
-
 #If the data files don't already exist, download and unzip them
 if(!dir.exists("UCI HAR Dataset")) {
   download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "./data.zip")
@@ -39,8 +36,10 @@ fullData <- merge(activityLabels, fullData, by.x = 1, by.y = "Activity ID")[-1]
 names(fullData)[1] <- "Activity"
 rm(activityLabels)
 
-# use ddply to split the data across Subject and Activity, then apply "mean()" column-wise
-tidyAverages <- ddply(fullData, .(Subject, Activity), numcolwise(mean))
+# aggregate all data using a model based on Activity and Subject, and apply mean to the columns
+tidyAverages <- aggregate(. ~ Activity + Subject, data = fullData, mean)
+# swap the first two columns so Subject comes first (purely aesthetics)
+tidyAverages <- tidyAverages[, c(2, 1, 3:ncol(tidyAverages))]
 
 # write the result to output
 write.table(tidyAverages, file = "tidy.txt")
